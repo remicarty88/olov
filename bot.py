@@ -17,28 +17,26 @@ from reportlab.pdfbase.ttfonts import TTFont
 import os
 
 # Попытка найти системный шрифт с поддержкой кириллицы
+registered_font = None
+
 def register_fonts():
-    # Пути к шрифтам на разных системах
+    global registered_font
+    # Пути к шрифтам на macOS
     font_paths = [
         "/System/Library/Fonts/Supplemental/Arial.ttf",
         "/Library/Fonts/Arial.ttf",
-        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
-        "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf"
+        "/System/Library/Fonts/Cache/Arial.ttf",
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf" # Linux
     ]
     
-    registered = False
     for path in font_paths:
         if os.path.exists(path):
             try:
                 pdfmetrics.registerFont(TTFont('CombinedFont', path))
-                registered = True
-                break
+                registered_font = 'CombinedFont'
+                return
             except:
                 continue
-    
-    if not registered:
-        # Если шрифт не найден, используем встроенный Courier (всегда доступен в reportlab)
-        pdfmetrics.registerFont(TTFont('CombinedFont', 'Courier'))
 
 register_fonts()
 
@@ -516,7 +514,7 @@ async def export_pdf(message: types.Message):
     title_style = ParagraphStyle(
         'TitleStyle',
         parent=styles['Heading1'],
-        fontName='CombinedFont',
+        fontName=PDF_FONT,
         fontSize=24,
         textColor=colors.HexColor("#FF4500"), # Оранжево-красный (OLOV)
         alignment=1, # Center
@@ -525,7 +523,7 @@ async def export_pdf(message: types.Message):
     subtitle_style = ParagraphStyle(
         'SubtitleStyle',
         parent=styles['Normal'],
-        fontName='CombinedFont',
+        fontName=PDF_FONT,
         fontSize=10,
         textColor=colors.grey,
         alignment=1,
@@ -564,7 +562,7 @@ async def export_pdf(message: types.Message):
         ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#FF4500")),
         ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
         ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-        ('FONTNAME', (0, 0), (-1, -1), 'CombinedFont'),
+        ('FONTNAME', (0, 0), (-1, -1), PDF_FONT),
         ('FONTSIZE', (0, 0), (-1, 0), 10),
         ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
         ('BACKGROUND', (0, 1), (-1, -1), colors.white),
@@ -576,7 +574,7 @@ async def export_pdf(message: types.Message):
     elements.append(Spacer(1, 20))
 
     # Итого
-    total_style = ParagraphStyle('TotalStyle', parent=styles['Normal'], fontName='CombinedFont', fontSize=12, alignment=2) # Right
+    total_style = ParagraphStyle('TotalStyle', parent=styles['Normal'], fontName=PDF_FONT, fontSize=12, alignment=2) # Right
     elements.append(Paragraph(f"<b>ИТОГО ДОЛГОВ: {format_uzs(total_debt)}</b>", total_style))
     elements.append(Paragraph(f"<b>ИТОГО К ОПЛАТЕ: {format_uzs(total_remains)}</b>", total_style))
 
