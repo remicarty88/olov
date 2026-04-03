@@ -18,12 +18,12 @@ import os
 
 # Попытка найти системный шрифт с поддержкой кириллицы
 def register_fonts():
-    # Пути к шрифтам на macOS
+    # Пути к шрифтам на разных системах
     font_paths = [
         "/System/Library/Fonts/Supplemental/Arial.ttf",
         "/Library/Fonts/Arial.ttf",
-        "/System/Library/Fonts/Cache/Arial.ttf",
-        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf" # Linux
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+        "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf"
     ]
     
     registered = False
@@ -37,8 +37,8 @@ def register_fonts():
                 continue
     
     if not registered:
-        # Если шрифт не найден, используем стандартный (могут быть квадратики)
-        pdfmetrics.registerFont(TTFont('CombinedFont', 'Helvetica'))
+        # Если шрифт не найден, используем встроенный Courier (всегда доступен в reportlab)
+        pdfmetrics.registerFont(TTFont('CombinedFont', 'Courier'))
 
 register_fonts()
 
