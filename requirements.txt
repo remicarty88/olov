@@ -1,2 +1,6 @@
 aiogram
 firebase-admin
+pandas
+openpyxl
+reportlab
+
