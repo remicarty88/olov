@@ -15,6 +15,8 @@ from reportlab.lib.units import cm
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 import os
+import json
+import base64
 
 # Попытка найти системный шрифт с поддержкой кириллицы
 registered_font = None
@@ -62,15 +64,28 @@ FIREBASE_DATABASE_URL = "https://neonapp-a05b0-default-rtdb.firebaseio.com/"
 FIREBASE_SERVICE_ACCOUNT_JSON = "neonapp-a05b0-firebase-adminsdk-evh7r-45fcbe3067.json"
 
 # --- FIREBASE INIT ---
+firebase_creds = None
+if os.getenv("FIREBASE_SERVICE_ACCOUNT_JSON"):
+    try:
+        creds_json = base64.b64decode(os.getenv("FIREBASE_SERVICE_ACCOUNT_JSON")).decode("utf-8")
+        firebase_creds = json.loads(creds_json)
+    except Exception as e:
+        print(f"Error decoding FIREBASE_SERVICE_ACCOUNT_JSON: {e}")
+        # Fallback to file if env var decoding fails
+        pass
+
 try:
-    cred = credentials.Certificate(FIREBASE_SERVICE_ACCOUNT_JSON)
+    if firebase_creds:
+        cred = credentials.Certificate(firebase_creds)
+    else:
+        cred = credentials.Certificate(FIREBASE_SERVICE_ACCOUNT_JSON)
     firebase_admin.initialize_app(cred, {
         'databaseURL': FIREBASE_DATABASE_URL
     })
 except Exception as e:
     print(f"Error initializing Firebase: {e}")
     # For local development without the file, we continue but DB calls will fail.
-    # In production, ensure firebase-sdk.json is present.
+    # In production, ensure firebase-sdk.json is present or env var is set.
 
 # --- LOGGING ---
 logging.basicConfig(level=logging.INFO, stream=sys.stdout)
@@ -641,3 +656,4 @@ if __name__ == "__main__":
 4. Запустите бота:
    python bot.py
 '''
+
