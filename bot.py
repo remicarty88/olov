@@ -59,7 +59,7 @@ API_TOKEN = "8752266798:AAFlBiA2F9_xlmymr6yFK0ENzZ9fHiwZutA"
 ADMIN_ID = 6201234513
 FIREBASE_DATABASE_URL = "https://neonapp-a05b0-default-rtdb.firebaseio.com/"
 # Path to your Firebase service account JSON file
-FIREBASE_SERVICE_ACCOUNT_JSON = "neonapp-a05b0-firebase-adminsdk-evh7r-02dbcd967c.json"
+FIREBASE_SERVICE_ACCOUNT_JSON = "neonapp-a05b0-firebase-adminsdk-evh7r-45fcbe3067.json"
 
 # --- FIREBASE INIT ---
 try:
