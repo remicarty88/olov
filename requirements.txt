@@ -1,6 +1,6 @@
-aiogram
-firebase-admin
-pandas
-openpyxl
-reportlab
-
+aiogram>=3.0.0
+firebase-admin>=6.0.0
+pandas>=2.0.0
+reportlab>=4.0.0
+openpyxl>=3.1.0
+python-dotenv>=1.0.0
